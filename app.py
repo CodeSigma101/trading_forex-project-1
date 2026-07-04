@@ -61,7 +61,10 @@ def load_portfolio_data(assets, benchmark, s_date, e_date):
             single_df = yf.download(ticker, start=s_str, end=e_str, progress=False)
             if isinstance(single_df.columns, pd.MultiIndex):
                 single_df.columns = single_df.columns.get_level_values(0)
-            combined_dict[ticker] = single_df["Close"].copy()
+            
+            # Isolate data rows securely
+            if not single_df.empty and "Close" in single_df.columns:
+                combined_dict[ticker] = single_df["Close"].copy()
         except Exception:
             pass
             
@@ -72,19 +75,23 @@ def load_portfolio_data(assets, benchmark, s_date, e_date):
 try:
     price_matrix = load_portfolio_data(portfolio_assets, market_benchmark, start_date, end_date)
 
+    if price_matrix.empty:
+        st.error("❌ Data matrix empty for selected timeline dates. Adjust calendar fields above.")
+        st.stop()
+
     # 4 DISTINCT ACADEMIC MASTER TABS
     tab1, tab2, tab3, tab4 = st.tabs([
-        "📊  Price Action Engine",
-        "🔬  Fundamental DCF Core",
-        "⚡  Algorithmic Backtester",
-        "🛡️  MPT Risk Allocator"
+        "📊 Price Action Engine",
+        "🔬 Fundamental DCF Core",
+        "⚡ Algorithmic Backtester",
+        "🛡️ MPT Risk Allocator"
     ])
 
     # =======================================================
     # TAB 1: PROJECT 1 - TECHNICAL ANALYSIS & PRICE REJECTION
     # =======================================================
     with tab1:
-        st.subheader(f"Candlestick Microstructure Engine — {selected_asset}")
+        st.subheader(f"Project 1: Candlestick Microstructure Engine — {selected_asset}")
         st.markdown("Quantifying raw candlestick wick-to-body ratios ($R_{wb}$) at key structural zones without lagging indicator noise.")
         
         fig1 = go.Figure()
@@ -95,7 +102,7 @@ try:
         st.markdown(
             """
             <div style='background-color:#0D1527; padding:15px; border-radius:8px; border: 1px solid #1E3A8A; color: #38BDF8;'>
-                🛡️ <b>CIRCUIT BREAKER MATRIX:</b> Active. Trailing loss states are parsed bar-by-bar. Emplements a mechanical 50% position scale optimization via the Half-Size Rule after two consecutive losses.
+                🛡️ <b>PROJECT 1 CIRCUIT BREAKER MATRIX:</b> Active. Trailing loss states are parsed bar-by-bar. Emplements a mechanical 50% position scale optimization via the Half-Size Rule after two consecutive losses.
             </div>
             """, unsafe_allow_html=True
         )
@@ -104,7 +111,7 @@ try:
     # TAB 2: PROJECT 2 - FUNDAMENTAL CORPORATE VALUATION
     # =======================================================
     with tab2:
-        st.subheader("PMulti-Scenario 5-Year Discounted Cash Flow Core")
+        st.subheader("Project 2: Multi-Scenario 5-Year Discounted Cash Flow Core")
         st.markdown("Isolates underlying corporate fair-value metrics from short-term stock market pricing premium variations.")
         
         col_v1, col_v2 = st.columns(2)
@@ -133,16 +140,16 @@ try:
         st.markdown(
             """
             <div style='background-color:#3B0712; padding:15px; border-radius:8px; border: 1px solid #991B1B; color: #FCA5A5;'>
-                ⚠️ <b>GATEKEEPER LOCK DECISION:</b> Current asset cost ($308.82) is trading at a steep premium over our safe purchase boundary ($161.73 after 30% Margin of Safety adjustments). <b>STRONG SELL / AWAIT CONTRACTION.</b>
+                ⚠️ <b>PROJECT 2 GATEKEEPER LOCK DECISION:</b> Current asset cost ($308.82) is trading at a steep premium over our safe purchase boundary ($161.73 after 30% Margin of Safety adjustments). <b>STRONG SELL / AWAIT CONTRACTION.</b>
             </div>
             """, unsafe_allow_html=True
         )
     # =======================================================
-    # TAB 3: PROJECT 3 - ALGORITHMIC STRATEGY & BACKTESTING
+    # TAB 3: PROJECT 3 - ALGORITHMIC BACKTESTER
     # =======================================================
     with tab3:
-        st.subheader(f" Vectorized Momentum Engine & Crossover Simulation — {selected_asset}")
-        st.markdown("Calculates historical trend alignment physics over multi-year timelines. Applies index shifting to prevent lookahead data validation leakage.")
+        st.subheader(f"Project 3: Algorithmic Backtester — {selected_asset}")
+        st.markdown("Calculates historical trend smoothing logic performance over multi-year timelines.")
         
         asset_series = price_matrix[selected_asset]
         ema_50 = asset_series.ewm(span=50, adjust=False).mean()
@@ -168,7 +175,7 @@ try:
     # TAB 4: PROJECT 4 - MODERN PORTFOLIO THEORY & RISK
     # =======================================================
     with tab4:
-        st.subheader("Modern Portfolio Theory Allocation & Macro Dashboard")
+        st.subheader("Project 4: Modern Portfolio Theory Allocation & Macro Dashboard")
         st.markdown("Enforces fixed fractional position sizing funnel constraints to insulate total capital from unsystematic sector correlations.")
 
         returns_matrix = price_matrix.pct_change().dropna()
@@ -182,13 +189,16 @@ try:
 
         for asset in portfolio_assets:
             cov_with_market = returns_matrix[asset].cov(benchmark_vector)
-            asset_beta = cov_with_market / market_variance
+            asset_beta = cov_with_market / market_variance if market_variance != 0 else 0
             weight = MANUAL_WEIGHTS[asset]
             weighted_portfolio_beta += weight * asset_beta
 
+            # Safe index execution to fully bypass out-of-bounds index exceptions
+            current_price_value = price_matrix[asset].iloc[-1] if len(price_matrix[asset]) > 0 else 0.0
+
             allocation_ledger.append({
-                "Asset Module": asset,
-                "Current Price": f"${price_matrix[asset].iloc[-1]:.2f}",
+                "Project 4: Asset Module": asset,
+                "Current Price": f"${current_price_value:.2f}",
                 "Target Weight": f"{weight * 100:.1f}%",
                 "Assigned Risk Barrier": f"-{MANUAL_STOPS[asset] * 100:.1f}%",
                 "Systemic Beta (βi)": f"{asset_beta:.4f}",
