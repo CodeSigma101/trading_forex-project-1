@@ -1,14 +1,9 @@
-# Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
-
-# Virtual environments
-venv/
 .venv/
+venv/
 env/
-
-# IDE files
 .vscode/
 .idea/
 .ipynb_checkpoints/

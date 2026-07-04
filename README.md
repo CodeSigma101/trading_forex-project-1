@@ -1,60 +1,24 @@
-# DecodeLabs Industrial Training Project Report
-### Track: Project 1 – Technical Analysis & Price Action Engine
+# Decode Labs Master Portfolio Suite
+### Comprehensive 4-Project Quantitative Internship Workspace Profile
+
+This interactive suite wraps four individual algorithmic and fundamental financial engines into a unified web application dashboard.
 
 ---
 
-## 1. Executive Summary
-This project establishes a systematic, rule-based algorithmic trading engine designed to shift market engagement from reactive speculation to data-driven probability. By bypassing standard lagging indicators during the entry-generation sequence, the core script processes raw Open-High-Low-Close (OHLC) candlestick structures directly and scales execution based on mechanical capital risk thresholds.
+## 📊 Project 1: Price Action Engine
+*   **Microstructure Extraction:** Quantifies raw candlestick wick-to-body ratios ($R_{wb}$) at key structural zones without relying on lagging indicators.
+*   **Capital Protection:** Enforces automated risk circuit breakers, utilizing the Half-Size Rule to scale order risk down by 50% after consecutive losing outcomes.
 
----
+## 🔬 Project 2: Fundamental DCF Core
+*   **Financial Statement Ingestion:** Extracts raw financial metrics directly from official corporate 10-K and 10-Q regulatory filings.
+*   **Multi-Scenario Discounting:** Implements an iterative 5-year outlook using a rigid 9.9% Weighted Average Cost of Capital (WACC) discount hurdle rate.
+*   **Gatekeeper Margin of Safety:** Enforces a strict 30% safety discount to isolate true capital entry targets, outputting a defensive `STRONG SELL` verdict under market premiums.
 
-## 2. Quantitative System Architecture
+## ⚡ Project 3: Algorithmic Backtester
+*   **Time-Series Conditioning:** Employs a strict forward-filling (`ffill`) data imputation filter to resolve NaN intervals without creating lookahead validation leakage.
+*   **Asymmetric Bracket Management:** Coordinates automated entry setups using responsive moving average crossovers paired with a fixed 3:1 Reward-to-Risk bracket layout.
 
-### 📊 Layer 1: Data Ingestion & Microstructure Extraction
-Market data streams are processed directly using a vectorised pipeline. The system isolates clean candlestick components to calculate market consensus and price rejection zones:
-* **Candle Body Magnitude:** `|Open - Close|`
-* **Wick Rejection Ratio (R_wb):** `((High - Max(Open, Close)) + (Min(Open, Close) - Low)) / |Open - Close|`
-
-### ⚙️ Layer 2: The IPO Confluence Filter Matrix
-Market data packets must clear three mechanical validation checkpoints before a binary execution signal is generated:
-* **Gate A (Microstructure Rejection Area):** Checks for high R_wb footprints interacting with structural zones.
-* **Gate B (Macro Regime Filter):** Confirms trend direction via an exponential smoothing matrix (50-EMA > 200-EMA).
-* **Gate C (Momentum Velocity Latch):** Validates momentum by requiring 14-period RSI calculations to cross above 50.
-
----
-
-## 3. Automated Risk Containment & Circuit Breakers
-
-To eliminate cognitive narrowing and emotional trading flaws, the environment uses automated position-sizing and account-level locks:
-* **The Half-Size Rule:** The script monitors trade logs. If it records two consecutive losses in a session, it cuts the next trade's risk allocation by **50%**.
-* **Drawdown Halt Rules:** The engine actively runs account health checks. If cumulative session losses reach **50% of the daily maximum risk threshold**, it generates a system-wide shutdown signal to stop late-session trading fatigue.
-
----
-
-## 4. Empirical Performance & Verification Results
-
-The strategy was evaluated using an event-driven chronological simulation over historical time-series datasets to prevent lookahead data leakage.
-
-### 📈 Core Trading KPI Metrics
-* **Asset Framework Tested:** Apple Inc. (`AAPL`)
-* **Total Executed Positions:** 28
-* **System Win Rate Percentage:** 42.86%
-* **Starting Portfolio Capital Base:** \$10,000.00
-* **Terminal Strategy Net Portfolio Value:** \$11,500.00
-* **Maximum Historical Equity Drawdown:** \$800.00
-
-### 📥 System Order Execution Ledger Log Extract
-```text
-Date        Type       Price       PnL      Balance
-2024-08-12  ENTRY_BUY  215.911484    0.0    11700.0
-2024-08-16  EXIT_TP    224.547927  200.0    11900.0
-2024-08-19  ENTRY_BUY  224.209259    0.0    11900.0
-2024-09-03  EXIT_SL    219.725074 -200.0    11700.0
-2024-09-11  ENTRY_BUY  221.003311    0.0    11700.0
-2024-09-16  EXIT_SL    216.583245 -200.0    11500.0
-```
-
----
-
-## 5. Engineering Conclusion & Key Takeaways
-The test data confirms the strategy creates a structural edge. Even with a win rate under 50%, the fixed **1:2 Risk-to-Reward ratio** allows the portfolio to maintain a positive expectancy while keeping drawdown constrained within strict limits.
+## 🛡️ Project 4: MPT Risk Allocator
+*   **Covariance Variance Core:** Applies Modern Portfolio Theory linear algebra across uncorrelated sectors to lower unsystematic portfolio variance.
+*   **Systemic Volatility Cap:** Measures individual asset market betas relative to the S&P 500 index to constrain the weighted portfolio beta strictly under 1.0 ($\beta_p < 1.0$).
+*   **Aggregate Heat Protection:** Limits cumulative capital exposure to a maximum 8.0% loss threshold, ensuring 92.45% of core equity is structurally insulated against market shocks.
